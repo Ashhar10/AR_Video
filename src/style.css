@@ -1,0 +1,1453 @@
+:root {
+  --bg-color: #0a0c10;
+  --surface-color: rgba(18, 22, 32, 0.85);
+  --surface-border: rgba(255, 255, 255, 0.12);
+  --gold-primary: #f1c40f;
+  --gold-gradient: linear-gradient(135deg, #f1c40f 0%, #e67e22 100%);
+  --ruby-primary: #e74c3c;
+  --ruby-gradient: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  --cyan-ar: #00d2d3;
+  --text-main: #f5f6fa;
+  --text-muted: #95a5a6;
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  touch-action: none;
+}
+
+/* Live Camera Feed for AR Mode */
+#ar-camera-feed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  display: none;
+}
+
+#ar-camera-feed.active {
+  display: block;
+}
+
+#webgl-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+#webgl-container.ar-active canvas {
+  background: transparent !important;
+}
+
+/* ======================================================== */
+/* 0. LUXURY SPLASH LOADER & FULLSCREEN TRANSITION */
+/* ======================================================== */
+.splash-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: radial-gradient(circle at center, #161c28 0%, #080a0e 100%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.5s ease;
+  cursor: pointer;
+  padding: 20px;
+}
+
+.splash-loader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 34px 28px;
+  background: rgba(18, 22, 32, 0.95);
+  border: 1px solid rgba(241, 196, 15, 0.35);
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 35px rgba(241, 196, 15, 0.18);
+  max-width: 92vw;
+  width: 380px;
+  backdrop-filter: blur(24px);
+  animation: splashCardIn 0.5s ease-out;
+}
+
+@keyframes splashCardIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.splash-logo-wrap {
+  margin-bottom: 14px;
+}
+
+.splash-logo {
+  height: 64px;
+  width: auto;
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,0.6));
+}
+
+.splash-title {
+  font-family: var(--font-heading);
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.splash-subtitle {
+  font-size: 0.82rem;
+  color: var(--gold-primary);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 22px;
+}
+
+.splash-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.splash-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: var(--gold-gradient);
+  border-radius: 4px;
+  transition: width 0.35s ease;
+}
+
+.splash-status {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 22px;
+}
+
+.btn-enter-app {
+  background: linear-gradient(135deg, #c0392b 0%, #f39c12 100%);
+  color: #ffffff;
+  border: none;
+  padding: 13px 28px;
+  border-radius: 30px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 6px 25px rgba(243, 156, 18, 0.55);
+  animation: pulseEnterApp 2s infinite;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-enter-app:hover {
+  transform: scale(1.05);
+}
+
+@keyframes pulseEnterApp {
+  0% { transform: scale(1); box-shadow: 0 6px 25px rgba(243, 156, 18, 0.5); }
+  50% { transform: scale(1.04); box-shadow: 0 8px 32px rgba(243, 156, 18, 0.75); }
+  100% { transform: scale(1); box-shadow: 0 6px 25px rgba(243, 156, 18, 0.5); }
+}
+
+.splash-tap-hint {
+  margin-top: 15px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.fs-banner {
+  position: absolute;
+  top: calc(70px + var(--safe-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  animation: fadeInDown 0.4s ease;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translate(-50%, -15px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.fs-banner-btn {
+  background: linear-gradient(135deg, #c0392b 0%, #f39c12 100%);
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 24px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(241, 196, 15, 0.45);
+  transition: transform 0.2s;
+}
+
+.fs-banner-btn:hover {
+  transform: scale(1.04);
+}
+
+/* ======================================================== */
+/* 1. TOP HEADER HUD (MOBILE RESPONSIVE 2-ROW DESIGN) */
+/* ======================================================== */
+.app-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: calc(10px + var(--safe-top)) 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(10, 12, 16, 0.96) 0%, rgba(10, 12, 16, 0.6) 75%, rgba(10, 12, 16, 0) 100%);
+  pointer-events: none;
+}
+
+.header-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.header-left, .header-right, .mode-switcher-wrap {
+  pointer-events: auto;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 34px;
+  width: auto;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+.brand-tag {
+  font-size: 0.68rem;
+  color: var(--gold-primary);
+  letter-spacing: 0.5px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-ar-badge {
+  background: linear-gradient(135deg, #0984e3 0%, #00d2d3 100%);
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(0, 210, 211, 0.4);
+  transition: transform 0.2s;
+}
+
+.btn-ar-badge:hover {
+  transform: translateY(-2px);
+}
+
+.live-scene-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(18, 22, 32, 0.85);
+  border: 1px solid rgba(241, 196, 15, 0.3);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  color: var(--gold-primary);
+  font-weight: 600;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #2ecc71;
+  border-radius: 50%;
+  animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(46, 204, 113, 0); }
+  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+}
+
+.btn-icon-only {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-color);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-icon-only:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Mode Switcher Nav (Scrollable Bar) */
+.mode-switcher-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.mode-switcher-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.mode-switcher {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface-color);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--surface-border);
+  padding: 3px 5px;
+  border-radius: 30px;
+  white-space: nowrap;
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  color: #fff;
+}
+
+.mode-btn.active {
+  background: var(--ruby-gradient);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+}
+
+.mode-btn-ar {
+  border: 1px solid rgba(0, 210, 211, 0.35);
+  color: #00d2d3;
+}
+
+.mode-btn-ar.active {
+  background: linear-gradient(135deg, #0984e3 0%, #00d2d3 100%) !important;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(0, 210, 211, 0.5) !important;
+}
+
+/* ======================================================== */
+/* 2. FLOATING 3D VIEW & SCALE CONTROLLER */
+/* ======================================================== */
+.view-controls-floating {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.view-ctrl-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--surface-color);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  transition: all 0.2s ease;
+}
+
+.view-ctrl-btn:hover {
+  background: rgba(241, 196, 15, 0.18);
+  border-color: var(--gold-primary);
+  color: var(--gold-primary);
+  transform: scale(1.05);
+}
+
+/* 3D Gesture Hint */
+.gesture-hint {
+  position: absolute;
+  top: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(18, 22, 32, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  z-index: 5;
+  pointer-events: none;
+  animation: fadeOutHint 6s forwards 3s;
+  white-space: nowrap;
+}
+
+@keyframes fadeOutHint {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* ======================================================== */
+/* 3. AR MODE HUD OVERLAY (HORIZONTAL PLANAR DETECTION) */
+/* ======================================================== */
+.ar-hud {
+  position: absolute;
+  top: calc(75px + var(--safe-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  animation: fadeIn 0.3s ease;
+  width: 92%;
+  max-width: 440px;
+}
+
+.ar-hud-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.ar-live-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid #00d2d3;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #00d2d3;
+  letter-spacing: 0.8px;
+}
+
+.ar-pulse {
+  width: 8px;
+  height: 8px;
+  background: #00d2d3;
+  border-radius: 50%;
+  animation: arPulseAnim 1.5s infinite;
+}
+
+@keyframes arPulseAnim {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(0, 210, 211, 0.8); }
+  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(0, 210, 211, 0); }
+  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(0, 210, 211, 0); }
+}
+
+.ar-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(18, 22, 32, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.ar-status-pill .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.ar-status-pill.scanning {
+  border-color: #f1c40f;
+  color: #f1c40f;
+}
+
+.ar-status-pill.scanning .status-dot {
+  background: #f1c40f;
+  animation: statusPulse 1s infinite alternate;
+}
+
+.ar-status-pill.locked {
+  border-color: #2ecc71;
+  color: #2ecc71;
+  background: rgba(16, 36, 26, 0.9);
+}
+
+.ar-status-pill.locked .status-dot {
+  background: #2ecc71;
+  box-shadow: 0 0 8px #2ecc71;
+}
+
+@keyframes statusPulse {
+  from { opacity: 0.4; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1.2); }
+}
+
+.btn-exit-ar {
+  background: rgba(231, 76, 60, 0.92);
+  border: none;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s;
+}
+
+.btn-exit-ar:hover {
+  transform: scale(1.05);
+}
+
+/* Center Placement Action Trigger */
+.ar-placement-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  margin-top: 14px;
+  transition: opacity 0.3s ease;
+}
+
+.ar-placement-hint {
+  font-size: 0.75rem;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 5px 14px;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-place-banner {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: #ffffff;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 26px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(46, 204, 113, 0.55);
+  animation: pulsePlace 2s infinite;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-place-banner:hover {
+  transform: scale(1.05);
+}
+
+@keyframes pulsePlace {
+  0% { transform: scale(1); box-shadow: 0 4px 20px rgba(46, 204, 113, 0.55); }
+  50% { transform: scale(1.04); box-shadow: 0 6px 26px rgba(46, 204, 113, 0.8); }
+  100% { transform: scale(1); box-shadow: 0 4px 20px rgba(46, 204, 113, 0.55); }
+}
+
+/* Bottom AR Toolbar */
+.ar-hud-bottom {
+  position: fixed;
+  bottom: calc(18px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  width: 90%;
+  max-width: 440px;
+}
+
+.ar-reposition-btn {
+  background: rgba(18, 22, 32, 0.95);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-primary);
+  padding: 8px 18px;
+  border-radius: 22px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s;
+}
+
+.ar-reposition-btn:hover {
+  transform: scale(1.05);
+}
+
+.ar-guide-pill {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.72rem;
+  color: #e2e8f0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ======================================================== */
+/* 4. BOTTOM HUD (PRODUCT SHELF ABOVE, SLIDER AT VERY BOTTOM) */
+/* ======================================================== */
+.app-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 12px calc(10px + var(--safe-bottom));
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.video-controls-bar, .product-shelf {
+  pointer-events: auto;
+}
+
+/* Product Showcase Carousel Shelf (Placed ABOVE Video Slider) */
+.product-shelf {
+  background: rgba(15, 18, 26, 0.95);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  padding: 12px 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+  margin-bottom: 8px;
+  max-height: 270px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.25s ease,
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              margin-bottom 0.35s ease,
+              padding 0.35s ease;
+  overflow: hidden;
+}
+
+/* WHEN COLLAPSED: Sinks cleanly into zero height */
+.product-shelf.collapsed {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  transform: translateY(15px) !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-color: transparent !important;
+  pointer-events: none !important;
+}
+
+.shelf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.shelf-eyebrow {
+  font-size: 0.62rem;
+  letter-spacing: 1.5px;
+  color: var(--gold-primary);
+  font-weight: 700;
+}
+
+.shelf-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.shelf-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.shelf-nav-btn, .shelf-close-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--surface-border);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.shelf-close-btn {
+  margin-left: 2px;
+}
+
+.shelf-nav-btn:hover, .shelf-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Horizontal Track */
+.shelf-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(241, 196, 15, 0.3) transparent;
+}
+
+.shelf-track::-webkit-scrollbar {
+  height: 4px;
+}
+
+.shelf-track::-webkit-scrollbar-thumb {
+  background: rgba(241, 196, 15, 0.3);
+  border-radius: 2px;
+}
+
+/* Product Card */
+.product-card {
+  flex: 0 0 145px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(241, 196, 15, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+}
+
+.card-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 0.58rem;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(241, 196, 15, 0.3);
+  color: var(--gold-primary);
+  padding: 2px 5px;
+  border-radius: 6px;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+}
+
+.card-jar-img {
+  width: 75px;
+  height: 105px;
+  object-fit: contain;
+  margin: 10px 0 4px;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+  transition: transform 0.25s ease;
+}
+
+.product-card:hover .card-jar-img {
+  transform: scale(1.08);
+}
+
+.card-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.card-weight {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.card-action-btn {
+  width: 100%;
+  padding: 5px 0;
+  background: rgba(241, 196, 15, 0.12);
+  border: 1px solid rgba(241, 196, 15, 0.3);
+  color: var(--gold-primary);
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.product-card:hover .card-action-btn {
+  background: var(--gold-gradient);
+  color: #111;
+  border-color: transparent;
+}
+
+/* Video Controls Bar (Flush at very bottom) */
+.video-controls-bar {
+  background: var(--surface-color);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  width: 100%;
+}
+
+.ctrl-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.ctrl-btn:hover {
+  color: var(--gold-primary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.time-display {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: monospace;
+  font-weight: 600;
+  min-width: 80px;
+}
+
+.progress-container {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--gold-gradient);
+  border-radius: 3px;
+  position: relative;
+  transition: width 0.1s linear;
+}
+
+.progress-handle {
+  position: absolute;
+  right: -5px;
+  top: -4px;
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border: 2px solid var(--gold-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+}
+
+.speed-select {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-size: 0.74rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.speed-select option {
+  background: #11141c;
+  color: #fff;
+}
+
+.btn-shelf-toggle {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  padding: 5px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-shelf-toggle.active {
+  background: rgba(241, 196, 15, 0.18);
+  border-color: rgba(241, 196, 15, 0.5);
+  color: var(--gold-primary);
+}
+
+.badge-pill {
+  background: var(--ruby-primary);
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 2px 5px;
+  border-radius: 8px;
+}
+
+/* ======================================================== */
+/* 5. PRODUCT DETAIL MODAL */
+/* ======================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+  background: rgba(5, 7, 10, 0.85);
+  backdrop-filter: blur(18px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  max-width: 800px;
+  width: 100%;
+  max-height: 88vh;
+  background: rgba(20, 24, 34, 0.96);
+  border: 1px solid rgba(241, 196, 15, 0.3);
+  border-radius: 20px;
+  padding: 28px;
+  position: relative;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+  transform: scale(0.92);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-backdrop.active .modal-card {
+  transform: scale(1);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--surface-border);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 10;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.modal-image-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 10px;
+}
+
+.modal-glow-bg {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  filter: blur(50px);
+  opacity: 0.35;
+  z-index: 1;
+}
+
+.modal-jar-image {
+  position: relative;
+  z-index: 2;
+  width: 180px;
+  height: 290px;
+  object-fit: contain;
+  filter: drop-shadow(0 15px 30px rgba(0,0,0,0.6));
+}
+
+.modal-info-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-product-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 3px 10px;
+  background: rgba(241, 196, 15, 0.15);
+  border: 1px solid rgba(241, 196, 15, 0.4);
+  color: var(--gold-primary);
+  font-size: 0.72rem;
+  border-radius: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.modal-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.modal-weight {
+  font-size: 0.8rem;
+  color: var(--gold-primary);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.modal-desc {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #d1d5db;
+  margin-bottom: 14px;
+}
+
+.modal-section-title {
+  font-size: 0.68rem;
+  letter-spacing: 1.2px;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.flavor-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.flavor-chip {
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  font-size: 0.72rem;
+  color: #e5e7eb;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.spec-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--surface-border);
+  padding: 6px 8px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-label {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+.spec-val {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 2px;
+}
+
+.modal-ingredients-text, .modal-pairing-text {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  transition: all 0.25s ease;
+  font-size: 0.85rem;
+  padding: 8px 14px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 50%, #f39c12 100%);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.btn-glow {
+  box-shadow: 0 0 16px rgba(231, 76, 60, 0.45);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+/* ======================================================== */
+/* 6. QR CODE MODAL */
+/* ======================================================== */
+.qr-card {
+  max-width: 420px;
+  text-align: center;
+}
+
+.qr-title {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.qr-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.qr-canvas-box {
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 14px;
+  display: inline-block;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  margin-bottom: 16px;
+}
+
+#qr-canvas {
+  display: block;
+}
+
+.qr-url-box {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+#qr-url-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--surface-border);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  outline: none;
+}
+
+.btn-copy {
+  background: var(--gold-gradient);
+  border: none;
+  color: #111;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.qr-network-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* ======================================================== */
+/* 7. COMPLETE RESPONSIVENESS & BREAKPOINTS */
+/* ======================================================== */
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: calc(6px + var(--safe-top)) 10px 6px;
+  }
+  .brand-text {
+    display: none;
+  }
+  .live-scene-badge {
+    display: none;
+  }
+  .mode-switcher {
+    padding: 2px 4px;
+  }
+  .mode-btn {
+    padding: 5px 9px;
+    font-size: 0.74rem;
+  }
+  .mode-btn .mode-label {
+    display: inline;
+  }
+  .modal-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .modal-product-badge {
+    align-self: center;
+  }
+  .modal-image-col {
+    padding: 0;
+  }
+  .modal-jar-image {
+    width: 130px;
+    height: 220px;
+  }
+  .flavor-tags {
+    justify-content: center;
+  }
+  .modal-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: calc(4px + var(--safe-top)) 8px 4px;
+  }
+  .btn-ar-badge {
+    padding: 5px 9px;
+    font-size: 0.72rem;
+  }
+  .btn-icon-only {
+    width: 32px;
+    height: 32px;
+  }
+  .mode-btn .mode-label {
+    font-size: 0.7rem;
+  }
+  .app-footer {
+    padding: 0 8px calc(8px + var(--safe-bottom));
+  }
+  .video-controls-bar {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .time-display {
+    min-width: 70px;
+    font-size: 0.68rem;
+  }
+  .speed-select {
+    display: none;
+  }
+  .shelf-toggle-text {
+    display: none;
+  }
+  .product-card {
+    flex: 0 0 120px;
+    padding: 6px;
+  }
+  .card-jar-img {
+    width: 60px;
+    height: 85px;
+  }
+  .card-title {
+    font-size: 0.72rem;
+  }
+  .view-controls-floating {
+    right: 8px;
+  }
+  .view-ctrl-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .gesture-hint {
+    top: 95px;
+    font-size: 0.68rem;
+    padding: 4px 10px;
+  }
+}

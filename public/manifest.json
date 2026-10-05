@@ -1,0 +1,18 @@
+{
+  "name": "Ahmed Foods 3D & AR Video Showcase",
+  "short_name": "Ahmed 3D",
+  "start_url": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0a0c10",
+  "theme_color": "#0a0c10",
+  "description": "Experience the 4K Ahmed Foods commercial on 3D curved LED banners and Augmented Reality.",
+  "icons": [
+    {
+      "src": "/products/ahmed_logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}
