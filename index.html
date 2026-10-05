@@ -202,26 +202,24 @@
   <!-- 3. AR MODE HUD OVERLAY (HORIZONTAL PLANAR DETECTION) -->
   <!-- ======================================================== -->
   <div id="ar-hud" class="ar-hud hidden">
+    <!-- Clean AR Top Bar (Status on Left, Exit on Right) -->
     <div class="ar-hud-top">
-      <div class="ar-live-pill">
-        <span class="ar-pulse"></span>
-        <span>AR CAMERA LIVE</span>
-      </div>
-
-      <!-- Horizontal Plane Status Badge -->
       <div id="ar-plane-status" class="ar-status-pill scanning">
         <span class="status-dot"></span>
         <span id="ar-plane-status-txt">Scanning Surface...</span>
       </div>
 
-      <button id="btn-exit-ar" class="btn-exit-ar" title="Exit AR Mode">Exit AR</button>
+      <button id="btn-exit-ar" class="btn-exit-ar" title="Exit AR Mode">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <span>Exit AR</span>
+      </button>
     </div>
 
     <!-- Center Reticle Surface Placement Button -->
     <div id="ar-placement-box" class="ar-placement-box">
-      <p id="ar-guide-text" class="ar-placement-hint">
-        Aim camera at floor or table surface
-      </p>
       <button id="btn-place-banner" class="btn-place-banner">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <circle cx="12" cy="12" r="10"></circle>
@@ -230,6 +228,9 @@
         </svg>
         <span>Place Video Banner Here</span>
       </button>
+      <p id="ar-guide-text" class="ar-placement-hint">
+        Aim at floor or table surface
+      </p>
     </div>
 
     <!-- Bottom AR Action Toolbar -->
@@ -243,7 +244,7 @@
       </button>
 
       <div class="ar-guide-pill">
-        <span>Banner anchored in 3D real world - Move phone around to view angles</span>
+        <span>Banner anchored in 3D world - Move phone to explore</span>
       </div>
     </div>
   </div>

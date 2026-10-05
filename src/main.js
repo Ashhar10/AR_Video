@@ -242,6 +242,7 @@ function initARMode() {
 function launchARMode() {
   // Ensure fullscreen for AR too
   requestAppFullscreen();
+  document.body.classList.add('ar-active-ui');
 
   const arHud = document.getElementById('ar-hud');
   const arModeBtn = document.querySelector('.mode-btn[data-mode="ar"]');
@@ -256,7 +257,7 @@ function launchARMode() {
   if (placementBox) placementBox.classList.remove('hidden');
   if (btnReposition) btnReposition.classList.add('hidden');
   if (planeStatus) planeStatus.className = 'ar-status-pill scanning';
-  if (planeStatusTxt) planeStatusTxt.textContent = 'Scanning for Horizontal Surface...';
+  if (planeStatusTxt) planeStatusTxt.textContent = 'Scanning Surface...';
 
   if (threeScene) {
     threeScene.startAR({
@@ -264,20 +265,21 @@ function launchARMode() {
       onError: (err) => console.warn('AR camera fallback:', err),
       onPlaneDetected: () => {
         if (planeStatus) planeStatus.className = 'ar-status-pill locked';
-        if (planeStatusTxt) planeStatusTxt.textContent = 'Horizontal Surface Detected';
+        if (planeStatusTxt) planeStatusTxt.textContent = 'Surface Detected';
         const guideText = document.getElementById('ar-guide-text');
-        if (guideText) guideText.textContent = 'Tap screen or press button to place banner';
+        if (guideText) guideText.textContent = 'Tap button or screen to place banner';
       },
       onBannerPlaced: () => {
         if (placementBox) placementBox.classList.add('hidden');
         if (btnReposition) btnReposition.classList.remove('hidden');
-        if (planeStatusTxt) planeStatusTxt.textContent = 'Video Banner Anchored in World';
+        if (planeStatusTxt) planeStatusTxt.textContent = 'Banner Anchored';
       }
     });
   }
 }
 
 function exitARMode() {
+  document.body.classList.remove('ar-active-ui');
   const arHud = document.getElementById('ar-hud');
   if (arHud) arHud.classList.add('hidden');
   if (threeScene) threeScene.stopAR();

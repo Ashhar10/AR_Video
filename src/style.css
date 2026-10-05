@@ -499,78 +499,61 @@ html, body {
 /* ======================================================== */
 /* 3. AR MODE HUD OVERLAY (HORIZONTAL PLANAR DETECTION) */
 /* ======================================================== */
+/* ======================================================== */
+/* 3. AR MODE HUD OVERLAY (CLEAN MOBILE RESPONSIVE LAYOUT) */
+/* ======================================================== */
+body.ar-active-ui .app-header,
+body.ar-active-ui .app-footer,
+body.ar-active-ui .view-controls-floating,
+body.ar-active-ui #gesture-hint,
+body.ar-active-ui #fs-banner {
+  display: none !important;
+}
+
 .ar-hud {
-  position: absolute;
-  top: calc(75px + var(--safe-top));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 15;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
   pointer-events: none;
   animation: fadeIn 0.3s ease;
-  width: 92%;
-  max-width: 440px;
+  overflow: hidden;
 }
 
 .ar-hud-top {
+  position: absolute;
+  top: calc(12px + var(--safe-top));
+  left: 14px;
+  right: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  gap: 8px;
+  gap: 10px;
   pointer-events: auto;
-}
-
-.ar-live-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(0, 0, 0, 0.85);
-  border: 1px solid #00d2d3;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #00d2d3;
-  letter-spacing: 0.8px;
-}
-
-.ar-pulse {
-  width: 8px;
-  height: 8px;
-  background: #00d2d3;
-  border-radius: 50%;
-  animation: arPulseAnim 1.5s infinite;
-}
-
-@keyframes arPulseAnim {
-  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(0, 210, 211, 0.8); }
-  70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(0, 210, 211, 0); }
-  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(0, 210, 211, 0); }
 }
 
 .ar-status-pill {
   display: flex;
   align-items: center;
   gap: 7px;
-  background: rgba(18, 22, 32, 0.9);
+  background: rgba(12, 16, 24, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.18);
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.72rem;
   font-weight: 600;
   color: #e5e7eb;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
 }
 
 .ar-status-pill .status-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .ar-status-pill.scanning {
@@ -586,7 +569,7 @@ html, body {
 .ar-status-pill.locked {
   border-color: #2ecc71;
   color: #2ecc71;
-  background: rgba(16, 36, 26, 0.9);
+  background: rgba(12, 28, 20, 0.9);
 }
 
 .ar-status-pill.locked .status-dot {
@@ -600,89 +583,103 @@ html, body {
 }
 
 .btn-exit-ar {
-  background: rgba(231, 76, 60, 0.92);
-  border: none;
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.75rem;
+  background: rgba(192, 57, 43, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 7px 15px;
+  border-radius: 22px;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
   pointer-events: auto;
-  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s, background 0.2s;
+  flex-shrink: 0;
 }
 
 .btn-exit-ar:hover {
   transform: scale(1.05);
+  background: #c0392b;
 }
 
 /* Center Placement Action Trigger */
 .ar-placement-box {
+  position: absolute;
+  bottom: calc(90px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   pointer-events: auto;
-  margin-top: 14px;
+  width: 90%;
+  max-width: 320px;
   transition: opacity 0.3s ease;
-}
-
-.ar-placement-hint {
-  font-size: 0.75rem;
-  color: #ffffff;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 5px 14px;
-  border-radius: 14px;
-  backdrop-filter: blur(8px);
-  letter-spacing: 0.3px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn-place-banner {
   background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
   color: #ffffff;
   border: none;
-  padding: 11px 22px;
-  border-radius: 26px;
+  padding: 12px 24px;
+  border-radius: 28px;
   font-family: var(--font-body);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(46, 204, 113, 0.55);
+  box-shadow: 0 4px 22px rgba(46, 204, 113, 0.6);
   animation: pulsePlace 2s infinite;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s;
+  width: 100%;
+  justify-content: center;
 }
 
 .btn-place-banner:hover {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 @keyframes pulsePlace {
   0% { transform: scale(1); box-shadow: 0 4px 20px rgba(46, 204, 113, 0.55); }
-  50% { transform: scale(1.04); box-shadow: 0 6px 26px rgba(46, 204, 113, 0.8); }
+  50% { transform: scale(1.03); box-shadow: 0 6px 26px rgba(46, 204, 113, 0.8); }
   100% { transform: scale(1); box-shadow: 0 4px 20px rgba(46, 204, 113, 0.55); }
+}
+
+.ar-placement-hint {
+  font-size: 0.72rem;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 4px 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
 }
 
 /* Bottom AR Toolbar */
 .ar-hud-bottom {
-  position: fixed;
+  position: absolute;
   bottom: calc(18px + var(--safe-bottom));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   pointer-events: auto;
   width: 90%;
-  max-width: 440px;
+  max-width: 360px;
 }
 
 .ar-reposition-btn {
-  background: rgba(18, 22, 32, 0.95);
+  background: rgba(14, 18, 26, 0.95);
   border: 1px solid var(--gold-primary);
   color: var(--gold-primary);
   padding: 8px 18px;
@@ -692,7 +689,7 @@ html, body {
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   cursor: pointer;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
   transition: transform 0.2s;
@@ -703,14 +700,14 @@ html, body {
 }
 
 .ar-guide-pill {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 6px 14px;
+  padding: 5px 14px;
   border-radius: 16px;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: #e2e8f0;
   text-align: center;
-  white-space: nowrap;
+  backdrop-filter: blur(8px);
 }
 
 /* ======================================================== */
@@ -1356,12 +1353,17 @@ html, body {
 @media (max-width: 768px) {
   .app-header {
     padding: calc(6px + var(--safe-top)) 10px 6px;
+    background: linear-gradient(180deg, rgba(10, 12, 16, 0.95) 0%, rgba(10, 12, 16, 0.7) 80%, transparent 100%);
   }
   .brand-text {
     display: none;
   }
   .live-scene-badge {
     display: none;
+  }
+  .mode-switcher-wrap {
+    justify-content: flex-start;
+    padding: 0 4px;
   }
   .mode-switcher {
     padding: 2px 4px;
@@ -1399,16 +1401,29 @@ html, body {
   .app-header {
     padding: calc(4px + var(--safe-top)) 8px 4px;
   }
+  .header-logo {
+    height: 28px;
+  }
   .btn-ar-badge {
-    padding: 5px 9px;
-    font-size: 0.72rem;
+    padding: 5px 8px;
+    font-size: 0.7rem;
+    gap: 5px;
   }
   .btn-icon-only {
     width: 32px;
     height: 32px;
   }
+  .mode-btn {
+    padding: 4px 7px;
+    font-size: 0.68rem;
+    gap: 4px;
+  }
   .mode-btn .mode-label {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
+  }
+  .mode-svg {
+    width: 12px;
+    height: 12px;
   }
   .app-footer {
     padding: 0 8px calc(8px + var(--safe-bottom));
