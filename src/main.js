@@ -391,14 +391,11 @@ function initQrModal() {
   const qrInput = document.getElementById('qr-url-input');
   const btnCopy = document.getElementById('btn-copy-url');
 
-  let targetUrl = window.location.href;
-  try {
-    const u = new URL(targetUrl);
-    if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') {
-      u.hostname = LAN_IP; u.protocol = 'https:';
-      targetUrl = u.toString();
-    }
-  } catch(e) {}
+  const PRODUCTION_URL = 'https://arvideoweb.vercel.app/';
+  let targetUrl = PRODUCTION_URL;
+  if (window.location.hostname.includes('vercel.app')) {
+    targetUrl = window.location.origin + '/';
+  }
   if (qrInput) qrInput.value = targetUrl;
 
   const gen = () => {
